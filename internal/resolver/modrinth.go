@@ -126,13 +126,13 @@ func (m *ModrinthResolver) fetchVersions(ctx context.Context, project, loader st
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "mcpkg/1.0 (github.com/PrimCraft/mcpkg)")
+	req.Header.Set("User-Agent", "scaf/1.0 (github.com/PrimCraft/scaf)")
 
 	resp, err := m.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("modrinth API returned %d", resp.StatusCode)

@@ -102,7 +102,7 @@ func runDownload(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func downloadHTTP(ctx context.Context, client *http.Client, url, dest string) error {
+func downloadHTTP(ctx context.Context, client *http.Client, url, dest string) (err error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return err
@@ -112,7 +112,7 @@ func downloadHTTP(ctx context.Context, client *http.Client, url, dest string) er
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("HTTP %d", resp.StatusCode)
@@ -122,16 +122,20 @@ func downloadHTTP(ctx context.Context, client *http.Client, url, dest string) er
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); err == nil {
+			err = cerr
+		}
+	}()
 
 	_, err = io.Copy(f, resp.Body)
 	return err
 }
 
-func downloadS3(ctx context.Context, s3URI, dest string) error {
+func downloadS3(ctx context.Context, s3URI, dest string) (err error) {
 	// Parse s3://bucket/key
 	var bucket, key string
-	_, err := fmt.Sscanf(s3URI, "s3://%s", &bucket)
+	_, err = fmt.Sscanf(s3URI, "s3://%s", &bucket)
 	if err != nil {
 		return fmt.Errorf("invalid S3 URI: %s", s3URI)
 	}
@@ -160,13 +164,17 @@ func downloadS3(ctx context.Context, s3URI, dest string) error {
 	if err != nil {
 		return err
 	}
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 
 	f, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); err == nil {
+			err = cerr
+		}
+	}()
 
 	_, err = io.Copy(f, result.Body)
 	return err

@@ -119,7 +119,7 @@ func (h *HangarResolver) fetchVersions(ctx context.Context, project string) ([]h
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("hangar API returned %d", resp.StatusCode)

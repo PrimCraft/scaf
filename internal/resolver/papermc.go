@@ -97,7 +97,7 @@ func (p *PaperMCResolver) fetchVersions(ctx context.Context, project string) ([]
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("PaperMC API returned %d", resp.StatusCode)
@@ -130,7 +130,7 @@ func (p *PaperMCResolver) fetchLatestBuild(ctx context.Context, project, version
 	if err != nil {
 		return 0, "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return 0, "", fmt.Errorf("PaperMC API returned %d", resp.StatusCode)
