@@ -31,6 +31,11 @@ func ParseVersion(version string) (*semver.Version, error) {
 
 // ParseConstraint parses a version constraint string.
 // If the string looks like a plain version (e.g., "5.0.0"), it's treated as exact match.
+//
+// To include prereleases, use the -0 suffix convention:
+//   - "~3.4"     matches >=3.4.0, <3.5.0 (stable only)
+//   - "~3.4.0-0" matches >=3.4.0-0, <3.5.0 (includes prereleases like SNAPSHOT)
+//   - ">=5.0.0-0" matches any version >=5.0.0 including prereleases
 func ParseConstraint(constraint string) (*semver.Constraints, error) {
 	if constraint == "" || constraint == "latest" {
 		return nil, nil
@@ -38,7 +43,7 @@ func ParseConstraint(constraint string) (*semver.Constraints, error) {
 
 	// If it looks like a plain version, treat as exact match
 	if matched, _ := regexp.MatchString(`^\d+\.\d+`, constraint); matched {
-		if !strings.ContainsAny(constraint, "=<>~^,| ") {
+		if !strings.ContainsAny(constraint, "=<>~^,| -") {
 			constraint = "=" + constraint
 		}
 	}
