@@ -59,16 +59,15 @@ release:
   # Only mark stable releases as "latest"
   make_latest: "{{ not .Prerelease }}"
   draft: false
-
-# Also publish bare binaries for easy curl downloads
-extra_files:
-  - glob: ./dist/scaf_linux_amd64_v1/scaf
-    name_template: scaf-linux-amd64
-  - glob: ./dist/scaf_linux_arm64/scaf
-    name_template: scaf-linux-arm64
-  - glob: ./dist/scaf_darwin_amd64_v1/scaf
-    name_template: scaf-darwin-amd64
-  - glob: ./dist/scaf_darwin_arm64/scaf
-    name_template: scaf-darwin-arm64
-  - glob: ./dist/scaf_windows_amd64_v1/scaf.exe
-    name_template: scaf-windows-amd64.exe
+  # Also publish bare binaries for easy curl downloads
+  extra_files:
+    - glob: ./dist/scaf_linux_amd64_v1/scaf
+      name_template: scaf-linux-amd64
+    - glob: ./dist/scaf_linux_arm64/scaf
+      name_template: scaf-linux-arm64
+    - glob: ./dist/scaf_darwin_amd64_v1/scaf
+      name_template: scaf-darwin-amd64
+    - glob: ./dist/scaf_darwin_arm64/scaf
+      name_template: scaf-darwin-arm64
+    - glob: ./dist/scaf_windows_amd64_v1/scaf.exe
+      name_template: scaf-windows-amd64.exe
